@@ -9,9 +9,9 @@ env:
 jobs:
   test:
     env:
-      MONGODB_CLUSTER_ADDRESS: cluster0.coqsd.mongodb.net
-      MONGODB_USERNAME: mongodb-user
-      MONGODB_PASSWORD: LCp99gTYh4lXsJUW
+      MONGODB_CLUSTER_ADDRESS: ${{ secrets.MONGODB_CLUSTER_ADDRESS }}
+      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
     runs-on: ubuntu-latest
     steps:
@@ -24,14 +24,14 @@ jobs:
           key: npm-deps-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
-      - name: Output information
-        run: |
-          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
-          echo "PORT: ${PORT}"
       - name: Run server
         run: npm start & npx wait-on http://127.0.0.1:${PORT}
       - name: Run tests
         run: npm test
+      - name: Output information
+        run: |
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+          echo "PORT: ${PORT}"
 
   deploy:
     needs: test
